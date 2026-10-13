@@ -1,0 +1,8 @@
+**/node_modules
+**/build
+**/__pycache__
+**/.env
+**/djangoenv
+**/.venv
+**/*.sqlite3
+.git

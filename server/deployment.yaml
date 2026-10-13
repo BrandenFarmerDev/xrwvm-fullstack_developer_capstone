@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dealership
+  labels:
+    run: dealership
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: dealership
+  template:
+    metadata:
+      labels:
+        run: dealership
+    spec:
+      containers:
+        - name: dealership
+          image: us.icr.io/REPLACE_NAMESPACE/dealership:latest
+          ports:
+            - containerPort: 8000
+          env:
+            - name: backend_url
+              value: REPLACE_BACKEND_URL
+            - name: sentiment_analyzer_url
+              value: REPLACE_SENTIMENT_URL
+            - name: ALLOWED_HOSTS
+              value: REPLACE_LAB_HOST
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8000
+            initialDelaySeconds: 5

@@ -7,16 +7,30 @@
 <script>
 
 const logout = async (e) => {
-//Include the code for logout here.
+  e.preventDefault();
+const res = await fetch('/djangoapp/logout');
+  if (!res.ok) { alert('The user could not be logged out.'); return; }
+  const username = sessionStorage.getItem('username');
+  sessionStorage.clear();
+  alert('Logging out ' + username + '...');
+  window.location.href = '/';
 };
 
 let checkSession = ()=>{
   let curr_user = sessionStorage.getItem("username");
 
   if (curr_user && curr_user !== "") {
-    document.getElementById("loginlogout").innerHTML = 
-    '<span class="homepage_links">' + curr_user +'</span>' +
-    '<a class="homepage_links" onclick="logout()" href="/">Logout</a>'
+    const panel = document.getElementById("loginlogout");
+    panel.replaceChildren();
+    const username = document.createElement('span');
+    username.className = 'homepage_links';
+    username.textContent = curr_user;
+    const link = document.createElement('a');
+    link.className = 'homepage_links';
+    link.href = '/';
+    link.textContent = 'Logout';
+    link.addEventListener('click', logout);
+    panel.append(username, link);
   } else {
     document.getElementById("loginlogout").innerHTML = 
     '<a class="homepage_links" href="/login">Login</a>'+
