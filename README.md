@@ -1,5 +1,8 @@
 # fullstack_developer_capstone
 
+Repository name: `xrwvm-fullstack_developer_capstone`  
+Project name: `fullstack_developer_capstone`
+
 Best Cars is a full stack car dealership review application for IBM CAD0321EN.
 
 The project combines Django authentication and car inventory models, a React frontend,
