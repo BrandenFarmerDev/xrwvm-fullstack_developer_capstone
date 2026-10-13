@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: dealership
+  name: course12-dealership
   labels:
     run: dealership
 spec:
@@ -16,18 +16,28 @@ spec:
     spec:
       containers:
         - name: dealership
-          image: us.icr.io/REPLACE_NAMESPACE/dealership:latest
+          image: us.icr.io/sn-labs-brandenfarme/course12-dealership:latest
           ports:
             - containerPort: 8000
           env:
             - name: backend_url
-              value: REPLACE_BACKEND_URL
+              value: https://brandenfarme-3030.theiadockernext-0-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai
             - name: sentiment_analyzer_url
-              value: REPLACE_SENTIMENT_URL
+              value: https://course12-sentianalyzer.2fv9hoh9sky1.us-south.codeengine.appdomain.cloud
             - name: ALLOWED_HOSTS
-              value: REPLACE_LAB_HOST
+              value: .proxy.cognitiveclass.ai,localhost,127.0.0.1
+            - name: CSRF_TRUSTED_ORIGINS
+              value: https://*.proxy.cognitiveclass.ai
+            - name: DEMO_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: course12-demo-admin
+                  key: password
           readinessProbe:
             httpGet:
               path: /
               port: 8000
+              httpHeaders:
+                - name: Host
+                  value: localhost
             initialDelaySeconds: 5
