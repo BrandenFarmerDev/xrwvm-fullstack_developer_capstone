@@ -1,0 +1,17 @@
+{
+  "name": "cars-inventory",
+  "version": "1.0.0",
+  "description": "Car inventory microservice for the dealership capstone",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "check": "node --check app.js && node --check inventory.js"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "mongodb": "^6.3.0",
+    "mongoose": "^8.0.1"
+  }
+}

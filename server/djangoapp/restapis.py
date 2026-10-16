@@ -9,6 +9,7 @@ backend_url = os.getenv('backend_url', 'http://localhost:3030').rstrip('/')
 sentiment_analyzer_url = os.getenv(
     'sentiment_analyzer_url', 'http://localhost:5000'
 ).rstrip('/')
+searchcars_url = os.getenv('searchcars_url', 'http://localhost:3050').rstrip('/')
 
 
 def get_request(endpoint, **kwargs):
@@ -33,3 +34,14 @@ def post_review(data_dict):
     )
     response.raise_for_status()
     return response.json()
+
+
+def searchcars_request(endpoint, **kwargs):
+    response = requests.get(
+        searchcars_url + '/' + endpoint.lstrip('/'), params=kwargs, timeout=20
+    )
+    response.raise_for_status()
+    cars = response.json()
+    if not isinstance(cars, list):
+        raise requests.RequestException('Invalid inventory response')
+    return cars

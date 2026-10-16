@@ -9,7 +9,9 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_GET, require_POST
 from .models import CarModel
 from .populate import initiate
-from .restapis import get_request, analyze_review_sentiments, post_review
+from .restapis import (
+    get_request, analyze_review_sentiments, post_review, searchcars_request,
+)
 
 
 def api_errors(view):
@@ -17,13 +19,13 @@ def api_errors(view):
     def wrapped(request, *args, **kwargs):
         try:
             return view(request, *args, **kwargs)
-        except (ValueError, KeyError, TypeError):
-            return JsonResponse(
-                {'status': 400, 'error': 'Invalid input'}, status=400
-            )
         except requests.RequestException:
             return JsonResponse(
                 {'status': 502, 'error': 'Backend unavailable'}, status=502
+            )
+        except (ValueError, KeyError, TypeError):
+            return JsonResponse(
+                {'status': 400, 'error': 'Invalid input'}, status=400
             )
     return wrapped
 
@@ -102,6 +104,28 @@ def get_cars(request):
         for model in CarModel.objects.select_related('car_make').order_by('id')
     ]
     return JsonResponse({'CarModels': cars})
+
+
+@require_GET
+@api_errors
+def get_inventory(request, dealer_id):
+    filters = (
+        ('year', 'carsbyyear'),
+        ('make', 'carsbymake'),
+        ('model', 'carsbymodel'),
+        ('mileage', 'carsbymaxmileage'),
+        ('price', 'carsbyprice'),
+    )
+    endpoint = f'cars/{dealer_id}'
+    for query_name, route_name in filters:
+        value = request.GET.get(query_name)
+        if value:
+            endpoint = f'{route_name}/{dealer_id}/{value}'
+            break
+    return JsonResponse({
+        'status': 200,
+        'cars': searchcars_request(endpoint),
+    })
 
 
 @csrf_exempt
