@@ -110,15 +110,16 @@ const SearchCars = () => {
     const loadDealer = async () => {
       try {
         const response = await fetch(`/djangoapp/dealer/${id}`);
+        if (!response.ok) throw new Error('Dealer details unavailable');
         const result = await response.json();
-        if (!response.ok || result.status !== 200 || !result.dealer?.length) {
-          throw new Error('Unable to load dealer');
+        if (result.status !== 200 || !result.dealer?.length) {
+          throw new Error('Dealer details unavailable');
         }
         if (lifecycleId === lifecycleRequest.current) {
           setDealer({ full_name: result.dealer[0].full_name });
         }
       } catch (error) {
-        if (lifecycleId === lifecycleRequest.current) setDealerMessage(error.message);
+        if (lifecycleId === lifecycleRequest.current) setDealerMessage('Dealer details unavailable');
       }
     };
 
@@ -134,7 +135,7 @@ const SearchCars = () => {
   return (
     <div>
       <Header />
-      <h1 style={{ marginBottom: '20px' }}>Cars at {dealer.full_name}</h1>
+      <h1 style={{ marginBottom: '20px' }}>Cars at {dealer.full_name || `Dealer ${id}`}</h1>
       {dealerMessage && <p role="alert">{dealerMessage}</p>}
       <div>
         <label>Make
